@@ -3489,6 +3489,12 @@ qemuBuildDriveStr(virConnectPtr conn,
         virBufferAsprintf(&opt, ",serial=%s", disk->serial);
     }
 
+    if (disk->encryption_key) {
+        if (qemuSafeSerialParamValue(disk->encryption_key) < 0)
+            goto error;
+        virBufferAsprintf(&opt, ",encryption_key=%s", encryption_key);
+    }
+
     if (disk->cachemode) {
         const char *mode = NULL;
 

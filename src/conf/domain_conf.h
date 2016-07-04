@@ -682,6 +682,7 @@ struct _virDomainDiskDef {
     virDomainBlockIoTuneInfo blkdeviotune;
 
     char *serial;
+    char *encryption_key;
     char *wwn;
     char *vendor;
     char *product;

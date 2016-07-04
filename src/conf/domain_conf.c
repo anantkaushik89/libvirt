@@ -5713,6 +5713,7 @@ virDomainDiskDefParseXML(virDomainXMLOptionPtr xmlopt,
     char *devaddr = NULL;
     virStorageEncryptionPtr encryption = NULL;
     char *serial = NULL;
+    char *encryption_key = NULL;
     char *startupPolicy = NULL;
     virStorageAuthDefPtr authdef = NULL;
     char *tray = NULL;
@@ -6127,6 +6128,9 @@ virDomainDiskDefParseXML(virDomainXMLOptionPtr xmlopt,
             } else if (!serial &&
                        xmlStrEqual(cur->name, BAD_CAST "serial")) {
                 serial = (char *)xmlNodeGetContent(cur);
+            } else if (!encryption_key &&
+                       xmlStrEqual(cur->name, BAD_CAST "encryption_key")) {
+                encryption_key = (char *)xmlNodeGetContent(cur);
             } else if (!wwn &&
                        xmlStrEqual(cur->name, BAD_CAST "wwn")) {
                 wwn = (char *)xmlNodeGetContent(cur);
@@ -6516,6 +6520,8 @@ virDomainDiskDefParseXML(virDomainXMLOptionPtr xmlopt,
     encryption = NULL;
     def->serial = serial;
     serial = NULL;
+    def->encryption_key = encryption_key;
+    encryption_key = NULL;
     def->wwn = wwn;
     wwn = NULL;
     def->vendor = vendor;
@@ -6567,6 +6573,7 @@ virDomainDiskDefParseXML(virDomainXMLOptionPtr xmlopt,
     VIR_FREE(driverIOThread);
     VIR_FREE(devaddr);
     VIR_FREE(serial);
+    VIR_FREE(encryption_key);
     virStorageEncryptionFree(encryption);
     VIR_FREE(startupPolicy);
     VIR_FREE(logical_block_size);
@@ -16975,6 +16982,7 @@ virDomainDiskDefFormat(virBufferPtr buf,
     if (def->transient)
         virBufferAddLit(buf, "<transient/>\n");
     virBufferEscapeString(buf, "<serial>%s</serial>\n", def->serial);
+    virBufferEscapeString(buf, "<encryption_key>%s</encryption_key>\n", def->encryption_key);
     virBufferEscapeString(buf, "<wwn>%s</wwn>\n", def->wwn);
     virBufferEscapeString(buf, "<vendor>%s</vendor>\n", def->vendor);
     virBufferEscapeString(buf, "<product>%s</product>\n", def->product);
